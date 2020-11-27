@@ -33,6 +33,19 @@ class Response:
     
 class Connection:
     BUFFER_LENGTH = 0x10000
+    #GLOBAL STATE VARS
+    INIT = 0
+    READY = 1
+    PLAYING = 2
+
+    SETUP = 0
+    PLAY  = 1
+    PAUSE = 2
+    TEARDOWN = 3
+
+    STATE = INIT
+
+    numRequests = 0
 
     def __init__(self, session, address):
         '''Establishes a new connection with an RTSP server. No message is
@@ -42,7 +55,9 @@ class Connection:
         self.ip = address[0]
         self.port = int(address[1])
         self.serverConnection()
-        
+        self.requestType = 0
+        self.cseq = 0
+
     def serverConnection(self):
         self.rtspSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         try: 
@@ -57,6 +72,43 @@ class Connection:
         RTSP connection.
         '''
         # TODO
+
+        if command == self.SETUP and self.STATE == self.INIT:
+            threading.Thread(target=self.rtspResponse).start()
+            #increment cseq number
+            self.cseq = 1
+            # create rtsp request
+            movie = session.video_name
+            extra_headers['client_port']
+            request = "SETUP " + str(movie) + " RTSP/1.0 " + "\n" + "CSeq: " + str(cseq) + "\n" + "Transport: RTP/UDP; " + 
+            #send request
+            self.rtspSocket().send(request)
+            print("\n--------SETUP request sent to server--------\n")
+
+            #update request sent for State tracking
+            self.requestType = self.INIT
+
+        elif command == self.PLAY and self.STATE == self.READY:
+            pass
+        elif command == self.PAUSE and self.STATE == self.PLAYING:
+            pass
+        elif command == self.TEARDOWN and not self.STATE = self.INIT:
+            pass
+
+    def rtspResponse():
+        "Receives RTSP response from server"
+        while True:
+          response = self.rtspSocket.recv(1024)
+
+          if response:
+              print(response)
+
+          if self.requestType == self.TEARDOWN:
+              self.rtspSocket.close()
+              break
+
+    def parseResponse():
+        pass
 
     def start_rtp_timer(self):
         '''Starts a thread that reads RTP packets repeatedly and process the
@@ -87,8 +139,15 @@ class Connection:
 	socket should also be defined to timeout after 1 second if no
 	packet is received.
         '''
-
-        # TODO
+        self.rtpSocket = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
+        udp_port = 0
+        headers = {"udp_port" : 0, "client_port": 9000 }
+        command = self.SETUP
+        response = self.send_request(command,extra_headers=udp_port)
+        # retrieve session id form response
+        # establish RTP datagram socket 
+        # create a socket with a random UDP port number 
+        # port number 
 
     def play(self):
         '''Sends a PLAY request to the server. This method is responsible for
