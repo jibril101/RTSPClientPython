@@ -58,11 +58,11 @@ class Connection:
         self.serverConnection()
         self.requestType = 0
         self.cseq = 0
-        print(socket.socket(socket.AF_INET,socket.SOCK_DGRAM))
     def serverConnection(self):
         self.rtspSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         try: 
-            self.rtspSocket.connect((self.ip, self.port))
+            address = (self.ip,self.port)
+            self.rtspSocket.connect(address)
         except:
             print("Could Not Connect To Server. Please Try Again")
 
@@ -80,8 +80,8 @@ class Connection:
             self.cseq = 1
             # create rtsp request
             movie = session.video_name
-            extra_headers['client_port']
-            request = "SETUP " + str(movie) + " RTSP/1.0 " + "\n" + "CSeq: " + str(cseq) + "\n" + "Transport: RTP/UDP; " 
+            client_port = self.udp_port
+            request = "SETUP " + str(movie) + " RTSP/1.0 " + "\n" + "CSeq: " + str(cseq) + "\n" + "Transport: RTP/UDP; client_port= " + str(client_port)
             #send request
             self.rtspSocket().send(request)
             print("\n--------SETUP request sent to server--------\n")
@@ -141,12 +141,14 @@ class Connection:
         '''
         self.rtpSocket = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
         try: 
-            self.rtpSocket.connect(self.ip,self.udp_port)
-        except:
-            print("Error connecting with UDP Stream. Try Again")
-        headers = {"client_port": self.port }
+            address = (self.ip,self.udp_port)
+            self.rtpSocket.connect(address)
+            print("in here udp conn")
+        except socket.error as exc:
+            print("Error connecting with UDP Stream : %s Try Again", exc)
+
         command = self.SETUP
-        response = self.send_request(command,extra_headers=headers)
+        response = self.send_request(command)
         # retrieve session id form response
         # establish RTP datagram socket 
         # create a socket with a random UDP port number 
