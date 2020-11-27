@@ -39,7 +39,12 @@ class Connection:
 	sent at this point, and no stream is set up.
         '''
         self.session = session
+        ip = address[0]
+        port = address[1]
 
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            pass  # Use the socket object without calling s.close().
+        
         # TODO
         
 
