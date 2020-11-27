@@ -59,6 +59,8 @@ class Connection:
         self.requestType = 0
         self.cseq = 0
     def serverConnection(self):
+        print("here")
+        print(callable(socket))
         self.rtspSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         try: 
             address = (self.ip,self.port)
@@ -75,13 +77,13 @@ class Connection:
         # TODO
 
         if command == self.SETUP and self.STATE == self.INIT:
-            threading.Thread(target=self.rtspResponse).start()
+            Thread(target=self.rtspResponse).start()
             #increment cseq number
             self.cseq = 1
             # create rtsp request
-            movie = session.video_name
+            movie = self.session.video_name
             client_port = self.udp_port
-            request = "SETUP " + str(movie) + " RTSP/1.0 " + "\n" + "CSeq: " + str(cseq) + "\n" + "Transport: RTP/UDP; client_port= " + str(client_port)
+            request = "SETUP " + str(movie) + " RTSP/1.0 " + "\n" + "CSeq: " + str(self.cseq) + "\n" + "Transport: RTP/UDP; client_port= " + str(client_port)
             #send request
             self.rtspSocket().send(request)
             print("\n--------SETUP request sent to server--------\n")
@@ -95,7 +97,7 @@ class Connection:
         elif command == self.TEARDOWN and not self.STATE == self.INIT:
             pass
 
-    def rtspResponse():
+    def rtspResponse(self):
         "Receives RTSP response from server"
         while True:
           response = self.rtspSocket.recv(1024)
