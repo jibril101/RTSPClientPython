@@ -57,7 +57,7 @@ class Connection:
         self.serverConnection()
         self.requestType = 0
         self.cseq = 0
-
+        print(socket.socket(socket.AF_INET,socket.SOCK_DGRAM))
     def serverConnection(self):
         self.rtspSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         try: 
@@ -80,11 +80,10 @@ class Connection:
             # create rtsp request
             movie = session.video_name
             extra_headers['client_port']
-            request = "SETUP " + str(movie) + " RTSP/1.0 " + "\n" + "CSeq: " + str(cseq) + "\n" + "Transport: RTP/UDP; " + 
+            request = "SETUP " + str(movie) + " RTSP/1.0 " + "\n" + "CSeq: " + str(cseq) + "\n" + "Transport: RTP/UDP; " 
             #send request
             self.rtspSocket().send(request)
             print("\n--------SETUP request sent to server--------\n")
-
             #update request sent for State tracking
             self.requestType = self.INIT
 
@@ -92,7 +91,7 @@ class Connection:
             pass
         elif command == self.PAUSE and self.STATE == self.PLAYING:
             pass
-        elif command == self.TEARDOWN and not self.STATE = self.INIT:
+        elif command == self.TEARDOWN and not self.STATE == self.INIT:
             pass
 
     def rtspResponse():
