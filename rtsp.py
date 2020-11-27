@@ -39,15 +39,19 @@ class Connection:
 	sent at this point, and no stream is set up.
         '''
         self.session = session
-        ip = address[0]
-        port = address[1]
-        port = int(port)
-        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-            s.connect((ip,port))
+        self.ip = address[0]
+        self.port = int(address[1])
+        self.serverConnection()
         
-        # TODO
-        
+    def serverConnection(self):
+        self.rtspSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        try: 
+            self.rtspSocket.connect((self.ip, self.port))
+        except:
+            print("Could Not Connect To Server. Please Try Again")
 
+
+        
     def send_request(self, command, include_session=True, extra_headers=None):
         '''Helper function that generates an RTSP request and sends it to the
         RTSP connection.
