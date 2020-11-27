@@ -41,9 +41,9 @@ class Connection:
         self.session = session
         ip = address[0]
         port = address[1]
-
+        port = int(port)
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-            pass  # Use the socket object without calling s.close().
+            s.connect((ip,port))
         
         # TODO
         
