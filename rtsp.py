@@ -54,6 +54,7 @@ class Connection:
         self.session = session
         self.ip = address[0]
         self.port = int(address[1])
+        self.udp_port = 9500
         self.serverConnection()
         self.requestType = 0
         self.cseq = 0
@@ -139,10 +140,13 @@ class Connection:
 	packet is received.
         '''
         self.rtpSocket = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
-        udp_port = 0
-        headers = {"udp_port" : 0, "client_port": 9000 }
+        try: 
+            self.rtpSocket.connect(self.ip,self.udp_port)
+        except:
+            print("Error connecting with UDP Stream. Try Again")
+        headers = {"client_port": self.port }
         command = self.SETUP
-        response = self.send_request(command,extra_headers=udp_port)
+        response = self.send_request(command,extra_headers=headers)
         # retrieve session id form response
         # establish RTP datagram socket 
         # create a socket with a random UDP port number 
